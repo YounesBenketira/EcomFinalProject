@@ -9,7 +9,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="CSS/navbar.css">
+    <link rel="stylesheet" href="CSS/home.css">
     <title>GetEducated</title>
 </head>
 <body>
@@ -23,21 +25,24 @@
             case 'home':
                 include_once('Pages/home.php');
                 break;
-            case 'search':
-                include_once('Pages/search.php');
+            case 'courses':
+                include_once('Pages/courses.php');
+                break;
+            case 'profile':
+                include_once('Pages/profile.php');
                 break;
             case 'help':
                 include_once('Pages/help.php');
                 break;
-            case 'login':
-                include_once('Pages/login.php');
-                break;
-            case 'register':
-                include_once('Pages/register.php');
+            case 'cart':
+                include_once('Pages/cart.php');
                 break;
             default:
+                
                 break;
         }
+    }else{
+        include_once('Pages/home.php');
     }
     ?>
 </body>
