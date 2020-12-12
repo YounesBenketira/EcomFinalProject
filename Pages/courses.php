@@ -4,6 +4,14 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+<style>
+.card {
+    display:inline-block;
+    margin-left: 50px;
+    margin-top: 50px;
+}
+</style>
+
 <div>
     <?php
         $pdo = new PDO($dsn, $user, $passwd);
