@@ -29,7 +29,16 @@
                 include_once('Pages/courses.php');
                 break;
             case 'profile':
-                include_once('Pages/profile.php');
+                include_once('Pages/Profile Page/profile.php');
+                if(isset($_POST['btn_login'])){
+                    echo "test ";
+                }
+                break;
+            case 'login':
+                include_once('Pages/Profile Page/login.php');
+                break;
+            case 'register':
+                include_once('Pages/Profile Page/register.php');
                 break;
             case 'help':
                 include_once('Pages/help.php');

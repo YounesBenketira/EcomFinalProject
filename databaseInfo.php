@@ -1,5 +1,5 @@
 <?php
-    $dbhost = 'localhost';
-    $dbuser = 'root';
-    $dbpass = '';
+    $dsn = "mysql:host = localhost; dbname=geteducated";
+    $user = "root";
+    $passwd = "";
 ?>
