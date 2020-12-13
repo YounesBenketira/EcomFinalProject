@@ -25,14 +25,43 @@ if (isset($_POST['btn_delete'])) {
 $pdo = new PDO($dsn, $user, $passwd);
 $command = $pdo->query("SELECT * FROM Customer WHERE ID = " . $_SESSION['UserID']);
 $user = $command->fetch();
+
+
+//Get user's Courses
+$course_list = explode(',', $user["Course List"]);
+$inQuery = implode(',', array_fill(0, count($course_list), '?'));
+$command = $pdo->prepare("SELECT * FROM COURSES WHERE `Course ID` IN (" . $inQuery . ")");
+foreach ($course_list as $k => $course_item) {
+    $command->bindValue(($k + 1), $course_item);
+}
+$command->execute();
+$rows = $command->fetchAll(PDO::FETCH_NUM);
+
+
+// foreach ($rows as $row) {
+//     echo "$row[0]";
+// }
 ?>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 <style>
     h1 {
         margin-left: 2%;
+    }
+
+    #course_list {
+        margin-left: 70px;
+        display: inline-block;
+    }
+
+    .card {
+        position: relative;
+        float: left;
+        margin: 10px 10px 10px 10px;
     }
 
     #user_info_header {
@@ -44,6 +73,24 @@ $user = $command->fetch();
 
     .user_info_row {
         font-size: 20px;
+    }
+
+    table {
+        margin-top: 50px;
+        margin-left: 120px;
+    }
+
+    th {
+        text-align: center;
+    }
+
+    table,
+    th,
+    td {
+        border: 0.5px solid lightgrey;
+        border-collapse: collapse;
+        padding: 10px 0px 10px 30px;
+        font-size: 18px;
     }
 </style>
 
@@ -64,9 +111,31 @@ $user = $command->fetch();
     </form>
 </div>
 
-<div id="courses_list">
-    <?php
-
-    ?>
-
-</div>
+<table style="width:86%">
+    <tr>
+        <th>Purchased Courses</th>
+    </tr>
+    <tr>
+        <th>
+            <?php
+            foreach ($rows as $row) {
+                echo "<form method=\"POST\" class=\"card\" style=\"width: 18rem;\">";
+                //echo '<div class="card" style="width: 18rem;">';
+                echo "<input type = \"hidden\" name = \"id\" value = " . $row["0"] . " />";
+                echo '<img class="card-img-top" src="data:image/jpeg;base64,' . base64_encode($row["5"]) . '" alt="Course Image" style="height: 12rem;">';
+                echo '<div class="card-body">';
+                echo '<h5 class="card-title" name="title">';
+                echo $row["1"];
+                echo '</h5>';
+                echo '<h6 class="card-title">';
+                echo "Teacher: " . $row["4"];
+                echo '</h5>';
+                echo '</div>';
+                // echo '</div>';
+                echo "</form>";
+            }
+            ?>
+        </th>
+    </tr>
+</table>
+<br>
