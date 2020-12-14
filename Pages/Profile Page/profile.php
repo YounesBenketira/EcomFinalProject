@@ -11,14 +11,8 @@ if (isset($_POST['btn_logout'])) {
 }
 
 if (isset($_POST['btn_edit'])) {
-    // header("Location: http://localhost/EcomFinalProject/index.php?page=login");
-    // exit();
-}
-
-if (isset($_POST['btn_delete'])) {
-    // session_destroy();
-    // header("Location: http://localhost/EcomFinalProject/index.php?page=login");
-    // exit();
+    header("Location: http://localhost/EcomFinalProject/index.php?page=profile_edit");
+    exit();
 }
 
 // Get the user by his/her ID
@@ -26,6 +20,17 @@ $pdo = new PDO($dsn, $user, $passwd);
 $command = $pdo->query("SELECT * FROM Customer WHERE ID = " . $_SESSION['UserID']);
 $user = $command->fetch();
 
+
+if (isset($_POST['btn_delete'])) {
+    session_destroy();
+
+    $sql = "DELETE FROM Customer WHERE ID = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$_SESSION['UserID']]);
+
+    header("Location: http://localhost/EcomFinalProject/index.php?page=login");
+    exit();
+}
 
 //Get user's Courses
 $course_list = explode(',', $user["Course List"]);
@@ -51,6 +56,7 @@ $rows = $command->fetchAll(PDO::FETCH_NUM);
 <style>
     h1 {
         margin-left: 2%;
+        margin-top: 1%;
     }
 
     #course_list {

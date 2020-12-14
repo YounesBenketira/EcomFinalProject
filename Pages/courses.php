@@ -2,8 +2,36 @@
 include_once('databaseInfo.php');
 $pdo = new PDO($dsn, $user, $passwd);
 
-$command = $pdo->query("SELECT * FROM COURSES");
+
+// Pagination Section
+$countsql = $pdo->prepare("SELECT COUNT(`Course ID`) FROM COURSES");
+$countsql->execute();
+$row = $countsql->fetch();
+
+$num_per_page = 5;
+$num_records = $row[0];
+$num_links = ceil($num_records / $num_per_page);
+
+$page;
+if (isset($_GET['index'])){
+    $page = $_GET['index'];
+}else{
+    $page = 0;
+}
+
+$start = $page * $num_per_page;
+
+// echo "Number per page: ". $num_per_page;
+// echo "<br>";
+// echo "Number of records: ". $num_records;
+// echo "<br>";
+// echo "Number of links: ". $num_links;
+// echo "<br>";
+// Pagination over
+
+$command = $pdo->query("SELECT * FROM COURSES LIMIT $start, $num_per_page");
 $rows = $command->fetchAll(PDO::FETCH_NUM);
+
 
 if (isset($_POST['btn_search'])) {
     $search_text = $_POST['search'];
@@ -33,28 +61,37 @@ if (isset($_POST['btn_cart'])) {
         // Update cart with new course only if it's not in the cart AND not in the users purchased courses already
         if ($isInCart) {
             echo "This Course is already in your cart!";
-        } else if ($isInCourses){
+        } else if ($isInCourses) {
             echo "This Course has already been purchased!";
-        } else{
+        } else {
             if (strlen($cart) > 0) {
                 $cart = $cart . ', ' . $_POST["id"];
             } else {
                 $cart = $_POST["id"];
             }
+
+            //Update the User's Cart in Database
+            $sql = "UPDATE Customer SET cart=? WHERE id=?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$cart, $_SESSION['UserID']]);
+
+            header("Location: http://localhost/EcomFinalProject/index.php?page=cart");
+            exit();
         }
-
-        //Update the User's Cart in Database
-        $sql = "UPDATE Customer SET cart=? WHERE id=?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$cart, $_SESSION['UserID']]);
-
-        // header("Location: http://localhost/EcomFinalProject/index.php?page=cart");
-        // exit();
+    }else{
+        echo "Must be logged in to purchase!!";
     }
 }
 
 if (isset($_POST['btn_edit'])) {
-    
+    session_start();
+    if (isset($_SESSION['UserID'])) {
+        header("Location: http://localhost/EcomFinalProject/index.php?page=edit_course&id=".$_POST["id"]);
+        exit();
+    }else{
+        echo "Must be logged in to edit!";
+        
+    }
 }
 
 ?>
@@ -118,16 +155,21 @@ if (isset($_POST['btn_edit'])) {
         display: table;
     }
 
-    .edit_btn{
+    .edit_btn {
         background-color: grey;
         border-color: grey;
     }
 
-    .edit_btn button:hover{
+    .edit_btn button:hover {
         background-color: lightgray;
         border-color: grey;
     }
 
+    #page_links{
+        text-align: center;
+        margin-top: 20px;
+        font-size: 25px;
+    }
 </style>
 
 <h1>Course Catalog</h1>
@@ -164,6 +206,12 @@ if (isset($_POST['btn_edit'])) {
         // echo '</div>';
         echo "</form>";
     }
+    echo "<br>";
+    echo '<div id="page_links">';
+    for($i = 0; $i<$num_links; $i++){
+        echo '<a href="index.php?page=courses&index='.$i.'">'.($i+1).' </a>';
+    }
+    echo '</div>';
     ?>
     <!-- </form> -->
 </div>
