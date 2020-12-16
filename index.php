@@ -41,9 +41,6 @@
             case 'register':
                 include_once('Pages/Profile Page/register.php');
                 break;
-            case 'help':
-                include_once('Pages/help.php');
-                break;
             case 'cart':
                 include_once('Pages/cart.php');
                 break;
